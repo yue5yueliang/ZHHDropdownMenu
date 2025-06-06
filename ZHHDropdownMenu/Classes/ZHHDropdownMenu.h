@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - 旋转图标（Rotate Icon）
 
 /// 右侧旋转箭头图标（通常用于指示下拉菜单状态）
-@property (nonatomic, strong) UIImage *menuArrowIcon;
+@property (nonatomic, strong, nullable) UIImage *menuArrowIcon;
 /// 旋转图标的大小（默认：CGSizeZero，需在外部赋值）
 @property (nonatomic, assign) CGSize menuArrowIconSize;
 /// 旋转图标距离右侧的间距（默认：7.5）

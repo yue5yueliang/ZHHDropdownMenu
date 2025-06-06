@@ -49,7 +49,7 @@
 /// 设置默认参数
 - (void)initProperties {
     // 标题属性
-    self.menuTitle = @"Please Select";
+    self.menuTitle = @"请选择";
     self.menuTitleBackgroundColor = [UIColor colorWithRed:64/255.f green:151/255.f blue:255/255.f alpha:1];
     self.menuTitleFont = [UIFont boldSystemFontOfSize:15];
     self.menuTitleTextColor = [UIColor whiteColor];
