@@ -58,7 +58,7 @@
     self.menuTitleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10);
 
     // 旋转箭头
-//    self.menuArrowIcon = nil;
+    self.menuArrowIcon = nil;
     self.menuArrowIconSize = CGSizeMake(15, 15);
     self.menuArrowIconMarginRight = 7.5;
     self.menuArrowIconTintColor = [UIColor blackColor];
@@ -392,7 +392,12 @@
 /// 设置旋转图标（箭头）
 - (void)setMenuArrowIcon:(UIImage *)menuArrowIcon {
     _menuArrowIcon = menuArrowIcon;
-    self.arrowImageView.image = menuArrowIcon;
+    
+    if (menuArrowIcon) {
+        self.arrowImageView.image = menuArrowIcon;
+    } else {
+        self.arrowImageView.image = nil; // 可省略，但加上更安全
+    }
 }
 
 /// 设置旋转图标的尺寸
