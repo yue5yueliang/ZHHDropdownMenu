@@ -58,7 +58,7 @@
     self.menuTitleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10);
 
     // 旋转箭头
-    self.menuArrowIcon = nil;
+//    self.menuArrowIcon = nil;
     self.menuArrowIconSize = CGSizeMake(15, 15);
     self.menuArrowIconMarginRight = 7.5;
     self.menuArrowIconTintColor = [UIColor blackColor];
