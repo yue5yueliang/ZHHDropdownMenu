@@ -1,0 +1,18 @@
+PODS:
+  - ZHHDropdownMenu (0.0.1):
+    - ZHHDropdownMenu/Core (= 0.0.1)
+  - ZHHDropdownMenu/Core (0.0.1)
+
+DEPENDENCIES:
+  - ZHHDropdownMenu (from `../`)
+
+EXTERNAL SOURCES:
+  ZHHDropdownMenu:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  ZHHDropdownMenu: 4933bfbf6c3d06e78a05bd54100c1403c4f6e7b9
+
+PODFILE CHECKSUM: 0bca180e9e87afd101e60c6d11c5a5436ba4e1e1
+
+COCOAPODS: 1.16.2
