@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'ZHHDropdownMenu'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary      = '一个简洁易用的下拉菜单组件，支持自定义样式和交互。'
 
   s.description  = <<-DESC
