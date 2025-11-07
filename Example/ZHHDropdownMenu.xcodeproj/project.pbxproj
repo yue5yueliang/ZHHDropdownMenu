@@ -38,7 +38,7 @@
 
 /* Begin PBXFileReference section */
 		143A9D10E90D5A82AA1FBF07 /* Pods_ZHHDropdownMenu_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ZHHDropdownMenu_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1670934514D9E1EDA5B0EF4A /* ZHHDropdownMenu.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ZHHDropdownMenu.podspec; path = ../ZHHDropdownMenu.podspec; sourceTree = "<group>"; };
+		1670934514D9E1EDA5B0EF4A /* ZHHDropdownMenu.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ZHHDropdownMenu.podspec; path = ../ZHHDropdownMenu.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		1CC4E37D93A123234F551D00 /* Pods-ZHHDropdownMenu_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZHHDropdownMenu_Example.release.xcconfig"; path = "Target Support Files/Pods-ZHHDropdownMenu_Example/Pods-ZHHDropdownMenu_Example.release.xcconfig"; sourceTree = "<group>"; };
 		3A0B2C3F3DAF8EE0C42A8934 /* Pods-ZHHDropdownMenu_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZHHDropdownMenu_Tests.debug.xcconfig"; path = "Target Support Files/Pods-ZHHDropdownMenu_Tests/Pods-ZHHDropdownMenu_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		3AC015525B6B1CE29AAC6736 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -527,7 +527,7 @@
 			baseConfigurationReference = E11AAB3B8381CC0ECFA643AE /* Pods-ZHHDropdownMenu_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = VAU24NCP22;
+				DEVELOPMENT_TEAM = C7337H3ZTV;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZHHDropdownMenu/ZHHDropdownMenu-Prefix.pch";
@@ -546,7 +546,7 @@
 			baseConfigurationReference = 1CC4E37D93A123234F551D00 /* Pods-ZHHDropdownMenu_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = VAU24NCP22;
+				DEVELOPMENT_TEAM = C7337H3ZTV;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZHHDropdownMenu/ZHHDropdownMenu-Prefix.pch";

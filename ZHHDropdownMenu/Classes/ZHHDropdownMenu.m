@@ -22,11 +22,19 @@
 
 /// 下拉菜单是否已展开
 @property (nonatomic, assign) BOOL isOpened;
+
+/// 缓存的下拉菜单高度（避免重复计算）
+@property (nonatomic, assign) CGFloat cachedDropdownHeight;
+/// 缓存的选项总数（避免重复调用数据源）
+@property (nonatomic, assign) NSUInteger cachedOptionsCount;
+/// 缓存的 KeyWindow（避免重复遍历）
+@property (nonatomic, weak) UIWindow *cachedKeyWindow;
 @end
 
 
 
 @implementation ZHHDropdownMenu
+
 
 #pragma mark - 初始化
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -41,10 +49,28 @@
 /// 视图布局更新
 - (void)layoutSubviews {
     [super layoutSubviews];
-    if (!self.isOpened) {
-        [self updateFrames]; // 仅在未展开时更新布局
+    if (!self.isOpened && !CGRectEqualToRect(self.bounds, self.containerView.bounds)) {
+        [self updateFrames]; // 仅在未展开且尺寸变化时更新布局
+        // 更新按钮背景图片大小
+        [self updateButtonBackgroundImageIfNeeded];
     }
 }
+
+/// 更新按钮背景图片（当按钮大小改变时）
+- (void)updateButtonBackgroundImageIfNeeded {
+    if (!self.menuButton || !self.menuTitleBackgroundColor) {
+        return;
+    }
+    
+    CGSize buttonSize = self.menuButton.bounds.size;
+    if (CGSizeEqualToSize(buttonSize, CGSizeZero)) {
+        return;
+    }
+    
+    UIImage *backgroundImage = [self imageWithColor:self.menuTitleBackgroundColor size:buttonSize];
+    [self.menuButton setBackgroundImage:backgroundImage forState:UIControlStateNormal];
+}
+
 
 #pragma mark - 初始化默认属性
 /// 设置默认参数
@@ -77,6 +103,9 @@
     _animationDuration = 0.25f;
     _optionsListMaxHeight = 0;
     _isOpened = NO;
+    _cachedDropdownHeight = 0;
+    _cachedOptionsCount = 0;
+    _cachedKeyWindow = nil;
 }
 
 #pragma mark - 初始化 UI
@@ -108,6 +137,9 @@
 #pragma mark - Action Methods
 /// 刷新下拉列表数据
 - (void)reloadData {
+    // 清除缓存，强制重新计算
+    _cachedDropdownHeight = 0;
+    _cachedOptionsCount = 0;
     [self.dropdownList reloadData];
 }
 
@@ -124,11 +156,11 @@
     CGPoint newPosition = [self convertToScreenPosition];
     self.containerView.frame = CGRectMake(newPosition.x, newPosition.y, CGRectGetWidth(self.containerView.bounds), CGRectGetHeight(self.containerView.bounds));
     
-    // 更新浮动视图样式
-    self.containerView.layer.borderColor  = self.layer.borderColor;
-    self.containerView.layer.borderWidth  = self.layer.borderWidth;
-    self.containerView.layer.cornerRadius = self.layer.cornerRadius;
-    [self.coverView addSubview:self.containerView];
+        // 更新浮动视图样式
+        self.containerView.layer.borderColor  = self.layer.borderColor;
+        self.containerView.layer.borderWidth  = self.layer.borderWidth;
+        self.containerView.layer.cornerRadius = self.layer.cornerRadius;
+        [self.coverView addSubview:self.containerView];
 
     // 触发代理回调：将要展开
     if ([self.delegate respondsToSelector:@selector(dropdownMenuWillAppear:)]) {
@@ -138,7 +170,7 @@
     // 刷新下拉数据
     [self reloadData];
 
-    // 计算下拉菜单高度
+    // 计算下拉菜单高度（使用缓存）
     CGFloat listHeight = [self calculateDropdownHeight];
 
     // 开始展开动画
@@ -159,6 +191,7 @@
         strongSelf.dropdownList.frame = listViewFrame;
         
     } completion:^(BOOL finished) {
+        if (!weakSelf) return;
         // 触发代理回调：展开完成
         if ([weakSelf.delegate respondsToSelector:@selector(dropdownMenuDidAppear:)]) {
             [weakSelf.delegate dropdownMenuDidAppear:weakSelf];
@@ -170,20 +203,35 @@
 
 /// 计算下拉菜单高度
 - (CGFloat)calculateDropdownHeight {
+    // 如果已缓存且数据源未变化，直接返回缓存值
+    if (_cachedDropdownHeight > 0 && _cachedOptionsCount > 0) {
+        NSUInteger currentCount = [self.dataSource numberOfOptionsInDropdownMenu:self];
+        if (currentCount == _cachedOptionsCount) {
+            return _cachedDropdownHeight;
+        }
+    }
+    
     CGFloat listHeight = 0;
     
     if (self.optionsListMaxHeight <= 0) {
         // 当未设置最大高度时，根据内容计算
         NSUInteger count = [self.dataSource numberOfOptionsInDropdownMenu:self];
-        for (int i = 0; i < count; i++) {
+        _cachedOptionsCount = count;
+        
+        // 批量计算高度，减少方法调用开销
+        for (NSUInteger i = 0; i < count; i++) {
             listHeight += [self.dataSource dropdownMenu:self optionHeightAtIndex:i];
         }
         self.dropdownList.scrollEnabled = NO;
     } else {
         // 设置了最大高度时，使用该高度
         listHeight = self.optionsListMaxHeight;
+        _cachedOptionsCount = [self.dataSource numberOfOptionsInDropdownMenu:self];
         self.dropdownList.scrollEnabled = YES;
     }
+    
+    // 缓存计算结果
+    _cachedDropdownHeight = listHeight;
     
     return listHeight;
 }
@@ -233,14 +281,17 @@
 
         // 6. 更新状态
         weakSelf.isOpened = NO;
+        
+        // 7. 清除 KeyWindow 缓存（窗口可能已变化）
+        weakSelf.cachedKeyWindow = nil;
 
-        // 7. 通知代理方法，菜单已经关闭
+        // 8. 通知代理方法，菜单已经关闭
         if ([weakSelf.delegate respondsToSelector:@selector(dropdownMenuDidDisappear:)]) {
             [weakSelf.delegate dropdownMenuDidDisappear:weakSelf];
         }
     }];
     
-    // 8. 取消 `menuButton` 的选中状态
+    // 9. 取消 `menuButton` 的选中状态
     self.menuButton.selected = NO;
 }
 
@@ -252,8 +303,13 @@
     return [self.superview convertPoint:CGPointMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame)) toView:keyWindow];
 }
 
-/// 获取当前 App 的 KeyWindow（兼容 iOS 13+）
+/// 获取当前 App 的 KeyWindow（兼容 iOS 13+，带缓存优化）
 - (UIWindow *)currentKeyWindow {
+    // 如果缓存的 window 仍然有效，直接返回
+    if (_cachedKeyWindow && _cachedKeyWindow.isKeyWindow) {
+        return _cachedKeyWindow;
+    }
+    
     UIWindow *foundWindow = nil;
     
     // 遍历所有已连接的场景
@@ -263,6 +319,7 @@
             
             for (UIWindow *window in windowScene.windows) {
                 if (window.isKeyWindow) {
+                    _cachedKeyWindow = window; // 缓存结果
                     return window; // 直接返回 keyWindow
                 }
                 
@@ -272,6 +329,11 @@
                 }
             }
         }
+    }
+    
+    // 缓存找到的 window（即使是兜底方案）
+    if (foundWindow) {
+        _cachedKeyWindow = foundWindow;
     }
     
     return foundWindow; // 兜底返回
@@ -306,13 +368,13 @@
 
 // 选中某个选项
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    ZHHDropdownMenuCell *cell = (ZHHDropdownMenuCell *)[tableView cellForRowAtIndexPath:indexPath];
-
-    self.menuTitle = cell.titleLabel.text; // 直接使用 cell 的 titleLabel
+    // 直接从数据源获取标题，避免获取 cell（cell 可能不在屏幕上）
+    NSString *selectedTitle = [self.dataSource dropdownMenu:self optionTitleAtIndex:indexPath.row];
+    self.menuTitle = selectedTitle;
 
     // 触发代理方法
     if ([self.delegate respondsToSelector:@selector(dropdownMenu:didSelectOptionAtIndex:title:)]) {
-        [self.delegate dropdownMenu:self didSelectOptionAtIndex:indexPath.row title:cell.titleLabel.text];
+        [self.delegate dropdownMenu:self didSelectOptionAtIndex:indexPath.row title:selectedTitle];
     }
 
     [self close]; // 关闭下拉菜单
@@ -323,35 +385,49 @@
 
 // 统一封装 Cell 的内容配置
 - (void)configureCell:(ZHHDropdownMenuCell *)cell atIndexPath:(NSIndexPath *)indexPath forTableView:(UITableView *)tableView {
+    NSUInteger row = indexPath.row;
     
-    // 判断当前行是否为最后一行
-    BOOL isLastItem = indexPath.row == [self.dataSource numberOfOptionsInDropdownMenu:self] - 1;
+    // 使用缓存的总数判断是否为最后一行，避免重复调用数据源
+    NSUInteger totalCount = _cachedOptionsCount > 0 ? _cachedOptionsCount : [self.dataSource numberOfOptionsInDropdownMenu:self];
+    if (_cachedOptionsCount == 0) {
+        _cachedOptionsCount = totalCount;
+    }
+    BOOL isLastItem = (row == totalCount - 1);
     
     // 设置分割线的显示状态
     // 如果是最后一行，隐藏分割线
     // 否则，保持正常的分割线显示
     cell.separatorInset = isLastItem ? UIEdgeInsetsMake(0, CGRectGetWidth(tableView.bounds), 0, 0) : self.separatorInsets;
     
-    CGFloat cHeight = [self.dataSource dropdownMenu:self optionHeightAtIndex:indexPath.row];
+    CGFloat cHeight = [self.dataSource dropdownMenu:self optionHeightAtIndex:row];
+    CGFloat cellWidth = CGRectGetWidth(tableView.bounds);
 
-    // 设置标题
-    cell.titleLabel.text = [self.dataSource dropdownMenu:self optionTitleAtIndex:indexPath.row];
+    // 设置标题（批量设置属性，减少多次属性访问）
+    NSString *title = [self.dataSource dropdownMenu:self optionTitleAtIndex:row];
+    cell.titleLabel.text = title;
     cell.titleLabel.font = self.optionTextFont;
     cell.titleLabel.textColor = self.optionTextColor;
     cell.titleLabel.numberOfLines = self.optionNumberOfLines;
     cell.titleLabel.textAlignment = self.optionTextAlignment;
-    cell.titleLabel.frame = CGRectMake(self.optionTextMarginLeft, 0,
-                                       self.frame.size.width - self.optionTextMarginLeft - self.optionIconSize.width - self.optionIconMarginRight,
-                                       cHeight);
+    
+    // 计算标题 frame
+    CGFloat titleWidth = cellWidth - self.optionTextMarginLeft - self.optionIconSize.width - self.optionIconMarginRight;
+    cell.titleLabel.frame = CGRectMake(self.optionTextMarginLeft, 0, titleWidth, cHeight);
 
     // 设置图标（如果有）
     if ([self.dataSource respondsToSelector:@selector(dropdownMenu:optionIconAtIndex:)]) {
-        cell.iconImageView.image = [self.dataSource dropdownMenu:self optionIconAtIndex:indexPath.row];
+        cell.iconImageView.image = [self.dataSource dropdownMenu:self optionIconAtIndex:row];
     }
-    cell.iconImageView.frame = CGRectMake(self.frame.size.width - self.optionIconSize.width - self.optionIconMarginRight,
-                                          (cHeight - self.optionIconSize.height) / 2,
-                                          self.optionIconSize.width,
-                                          self.optionIconSize.height);
+    
+    // 计算图标 frame
+    if (self.optionIconSize.width > 0 && self.optionIconSize.height > 0) {
+        CGFloat iconX = cellWidth - self.optionIconSize.width - self.optionIconMarginRight;
+        CGFloat iconY = (cHeight - self.optionIconSize.height) * 0.5;
+        cell.iconImageView.frame = CGRectMake(iconX, iconY, self.optionIconSize.width, self.optionIconSize.height);
+        cell.iconImageView.hidden = NO;
+    } else {
+        cell.iconImageView.hidden = YES;
+    }
 }
 
 #pragma mark - UIGestureRecognizerDelegate
@@ -437,8 +513,32 @@
 /// 设置菜单标题的背景色
 - (void)setMenuTitleBackgroundColor:(UIColor *)menuTitleBackgroundColor {
     _menuTitleBackgroundColor = menuTitleBackgroundColor;
-    self.menuButton.backgroundColor = menuTitleBackgroundColor;
+    if (self.menuButton && menuTitleBackgroundColor) {
+        CGSize buttonSize = self.menuButton.bounds.size;
+        if (CGSizeEqualToSize(buttonSize, CGSizeZero)) {
+            buttonSize = CGSizeMake(100, 40); // 默认大小，稍后会在 layoutSubviews 中更新
+        }
+        UIImage *backgroundImage = [self imageWithColor:menuTitleBackgroundColor size:buttonSize];
+        [self.menuButton setBackgroundImage:backgroundImage forState:UIControlStateNormal];
+        self.menuButton.backgroundColor = [UIColor clearColor]; // 清除 backgroundColor，让背景图片生效
+    }
 }
+
+/// 将颜色转换为图片（用于按钮背景）
+- (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size {
+    if (CGSizeEqualToSize(size, CGSizeZero)) {
+        size = CGSizeMake(1, 1);
+    }
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, color.CGColor);
+    CGContextFillRect(context, CGRectMake(0, 0, size.width, size.height));
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 
 /// 设置菜单标题的字体
 - (void)setMenuTitleFont:(UIFont *)menuTitleFont {
@@ -509,7 +609,15 @@
         [_menuButton setTitle:self.menuTitle forState:UIControlStateNormal];
         [_menuButton setTitleColor:self.menuTitleTextColor forState:UIControlStateNormal];
         _menuButton.titleLabel.font = self.menuTitleFont;
-        _menuButton.backgroundColor = self.menuTitleBackgroundColor;
+        
+        // 使用背景图片方式设置背景色
+        if (self.menuTitleBackgroundColor) {
+            CGSize buttonSize = CGSizeMake(100, 40); // 初始默认大小，稍后会在 layoutSubviews 中更新
+            UIImage *backgroundImage = [self imageWithColor:self.menuTitleBackgroundColor size:buttonSize];
+            [_menuButton setBackgroundImage:backgroundImage forState:UIControlStateNormal];
+            _menuButton.backgroundColor = [UIColor clearColor]; // 清除 backgroundColor，让背景图片生效
+        }
+        
         [_menuButton addTarget:self action:@selector(clickMenuBtnAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _menuButton;
@@ -534,6 +642,15 @@
         _dropdownList.separatorColor = self.separatorColor;
         _dropdownList.separatorInset = self.separatorInsets;
         _dropdownList.scrollEnabled  = NO;
+        
+        // 减少不必要的视图更新
+        _dropdownList.estimatedRowHeight = 0; // 禁用估算高度，使用精确高度
+        _dropdownList.estimatedSectionHeaderHeight = 0;
+        _dropdownList.estimatedSectionFooterHeight = 0;
+        
+        // 优化滚动性能
+        _dropdownList.delaysContentTouches = NO; // 减少触摸延迟
+        _dropdownList.canCancelContentTouches = YES;
     }
     return _dropdownList;
 }
