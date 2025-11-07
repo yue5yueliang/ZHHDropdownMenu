@@ -24,13 +24,10 @@
 ## 📸 截图展示
 
 <div align="center">
-  <img src="screenshots/demo_basic.png" width="300" alt="基础示例 - 商品类型选择" />
-  <img src="screenshots/demo_city.png" width="300" alt="城市选择示例" />
-</div>
-
-<div align="center">
-  <img src="screenshots/demo_sort.png" width="300" alt="排序方式示例" />
-  <img src="screenshots/demo_multiline.png" width="300" alt="多行文本示例" />
+  <img src="screenshots/demo_basic.png" width="200" alt="基础示例 - 商品类型选择" />
+  <img src="screenshots/demo_city.png" width="200" alt="城市选择示例" />
+  <img src="screenshots/demo_sort.png" width="200" alt="排序方式示例" />
+  <img src="screenshots/demo_multiline.png" width="200" alt="多行文本示例" />
 </div>
 
 ## 📱 系统要求
