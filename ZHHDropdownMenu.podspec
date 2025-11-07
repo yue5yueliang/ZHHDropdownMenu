@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'ZHHDropdownMenu'
-  s.version          = '0.0.3'
+  s.version          = '1.0.0'
   s.summary          = '一个简洁易用的下拉菜单组件，支持自定义样式、高亮效果和性能优化。'
 
   s.description      = <<-DESC
@@ -20,29 +20,27 @@ Pod::Spec.new do |s|
 
   s.homepage         = 'https://github.com/yue5yueliang/ZHHDropdownMenu'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 
+  s.author           = {
     '桃色三岁' => '136769890@qq.com'
   }
-  s.source           = { 
-    :git => 'https://github.com/yue5yueliang/ZHHDropdownMenu.git', 
-    :tag => s.version.to_s 
+  s.source           = {
+    :git => 'https://github.com/yue5yueliang/ZHHDropdownMenu.git',
+    :tag => s.version.to_s
   }
   
   s.social_media_url = 'https://github.com/yue5yueliang'
-  s.requires_arc     = true
   s.ios.deployment_target = '13.0'
-  s.swift_version    = nil  # 纯 Objective-C 项目
+  s.swift_versions   = ['5.0']
 
   s.default_subspec = 'Core'
   
   s.subspec 'Core' do |core|
-    core.source_files = 'ZHHDropdownMenu/Classes/**/*.{h,m}'
-    core.public_header_files = 'ZHHDropdownMenu/Classes/**/*.h'
+    core.source_files = 'ZHHDropdownMenu/Classes/**/*.swift'
     core.frameworks = 'UIKit', 'Foundation'
     
     # 排除示例和测试文件
     core.exclude_files = [
-      'ZHHDropdownMenu/Classes/**/*Tests.{h,m}',
+      'ZHHDropdownMenu/Classes/**/*Tests.swift',
       'ZHHDropdownMenu/Example/**/*'
     ]
   end

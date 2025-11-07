@@ -1,7 +1,7 @@
 PODS:
-  - ZHHDropdownMenu (0.0.3):
-    - ZHHDropdownMenu/Core (= 0.0.3)
-  - ZHHDropdownMenu/Core (0.0.3)
+  - ZHHDropdownMenu (1.0.0):
+    - ZHHDropdownMenu/Core (= 1.0.0)
+  - ZHHDropdownMenu/Core (1.0.0)
 
 DEPENDENCIES:
   - ZHHDropdownMenu (from `../`)
@@ -11,7 +11,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  ZHHDropdownMenu: a92bf38ded032dcce65f317f7c741b916175f8a5
+  ZHHDropdownMenu: 275564e067b484a38dceb8912ae3d0c062d0926a
 
 PODFILE CHECKSUM: 0bca180e9e87afd101e60c6d11c5a5436ba4e1e1
 

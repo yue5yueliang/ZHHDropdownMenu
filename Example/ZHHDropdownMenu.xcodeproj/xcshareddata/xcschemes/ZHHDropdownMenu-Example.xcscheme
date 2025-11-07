@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1630"
+   LastUpgradeVersion = "1640"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6003F589195388D20070C39A"
+               BlueprintIdentifier = "607FACCF1AFB9204008FA782"
                BuildableName = "ZHHDropdownMenu_Example.app"
                BlueprintName = "ZHHDropdownMenu_Example"
+               ReferencedContainer = "container:ZHHDropdownMenu.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "607FACE41AFB9204008FA782"
+               BuildableName = "ZHHDropdownMenu_Tests.xctest"
+               BlueprintName = "ZHHDropdownMenu_Tests"
                ReferencedContainer = "container:ZHHDropdownMenu.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +44,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6003F589195388D20070C39A"
+            BlueprintIdentifier = "607FACCF1AFB9204008FA782"
             BuildableName = "ZHHDropdownMenu_Example.app"
             BlueprintName = "ZHHDropdownMenu_Example"
             ReferencedContainer = "container:ZHHDropdownMenu.xcodeproj">
@@ -41,7 +55,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6003F5AD195388D20070C39A"
+               BlueprintIdentifier = "607FACE41AFB9204008FA782"
                BuildableName = "ZHHDropdownMenu_Tests.xctest"
                BlueprintName = "ZHHDropdownMenu_Tests"
                ReferencedContainer = "container:ZHHDropdownMenu.xcodeproj">
@@ -63,7 +77,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6003F589195388D20070C39A"
+            BlueprintIdentifier = "607FACCF1AFB9204008FA782"
             BuildableName = "ZHHDropdownMenu_Example.app"
             BlueprintName = "ZHHDropdownMenu_Example"
             ReferencedContainer = "container:ZHHDropdownMenu.xcodeproj">
@@ -80,7 +94,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6003F589195388D20070C39A"
+            BlueprintIdentifier = "607FACCF1AFB9204008FA782"
             BuildableName = "ZHHDropdownMenu_Example.app"
             BlueprintName = "ZHHDropdownMenu_Example"
             ReferencedContainer = "container:ZHHDropdownMenu.xcodeproj">
